@@ -8,14 +8,14 @@ You need to set up a Discord bot via <https://discord.com/developers/application
 
        docker build MY-USER-NAME/discord-nav-bot .
 
-2. Replace `bot-token` with your bot token.
+2. Replace `BOT-TOKEN` with your bot token.
 
-       docker run --rm -e DISCORD_TOKEN='bot-token' MY-USER-NAME/discord-nav-bot
+       docker run --rm -e DISCORD_TOKEN='BOT-TOKEN' MY-USER-NAME/discord-nav-bot
        
 ## Run outside of Docker
 
     cp .env.tpl .env
-    echo "bot-token" >> .env
+    echo "BOT-TOKEN" >> .env
     npm install
     node bot.js
 
