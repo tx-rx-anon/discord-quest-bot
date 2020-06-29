@@ -1,14 +1,23 @@
-# Build and run Docker image
+# Setup
 
-1. You need to set up a Discord bot via <https://discord.com/developers/applications> to get a token.
+You need to set up a Discord bot via <https://discord.com/developers/applications> to get a token.
 
-2. Replace `my-user-name` with your desired user name.
+## Build and run Docker image
 
-    ```docker build my-user-name/discord-nav-bot .```
+1. Replace `MY-USER-NAME` with your desired user 
 
-3. Replace `bot-token` with your bot token.
+       docker build MY-USER-NAME/discord-nav-bot .
 
-    ```docker run --rm -e DISCORD_TOKEN='bot-token' my-user-name/discord-nav-bot```
+2. Replace `bot-token` with your bot token.
+
+       docker run --rm -e DISCORD_TOKEN='bot-token' MY-USER-NAME/discord-nav-bot
+       
+## Run outside of Docker
+
+    cp .env.tpl .env
+    echo "bot-token" >> .env
+    npm install
+    node bot.js
 
 # Methodology
 
@@ -36,4 +45,4 @@ As an admin, add a waypoint through Nebraska and set the ratio such that the way
     discord-nav-bot
     @user, 
     1:    <up> 1 <down> 0   (user)   Nebraska
-    <Google Maps>
+    <Google Maps link>
