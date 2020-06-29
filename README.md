@@ -1,30 +1,39 @@
-## Discord Bot Greeter
+# Build and run Docker image
 
-This is a simple code example on how to start your own Discord bot.
+1. You need to set up a Discord bot via <https://discord.com/developers/applications> to get a token.
 
-If you just have stumbled to the Git repo directly and no idea how this is being setup, please read my full guide [here](https://medium.com/davao-js/2019-tutorial-creating-your-first-simple-discord-bot-47fc836a170b).
+2. Replace `my-user-name` with your desired user name.
 
-## Prerequisites
+    ```docker build my-user-name/discord-nav-bot .```
 
-- Basic understanding with **JavaScript** (Node JS is a bonus)
-- Basic knowledge on using your terminal (mac/linux) or command line (windows)
-- Installed [Node JS](https://nodejs.org/en/) installed. (v8.0.0 or above)
-- You must have code editor installed (eg: [VS Code](https://sublimetext.com/))
-- And a [Discord](https://discordapp.com/) account and desktop client (obviously…)
+3. Replace `bot-token` with your bot token.
 
-## Setup Instructions
+    ```docker run --rm -e DISCORD_TOKEN='bot-token' my-user-name/discord-nav-bot```
 
-- Open your terminal and navigate to the root folder of the project
-- Install pre-requisites by doing `npm i` or `npm install` in the terminal
-- Generate your access token via [Discord App Developers portal](https://discordapp.com/developers/applications/).
-- In the project folder, duplicate the `.env.tpl` and rename it to `.env` then open it and add the generated token (from previous step) value there
+# Methodology
 
-## Starting the bot
+  + The bot keeps a list of waypoints and a destination.
+  + A Google Maps route is defined from the current location to the destination. Waypoints are included inbetween the current location and destination.
+  + Users can submit and vote on waypoints.
+  + Admins (users with `Admin` role) can set the destination and the upvote ratio above which waypoints are accepted into the route.
 
-Simply run the command `node bot.js`
+# Usage
 
-## Question(s)/Clarification(s)
+`!help` - show help
 
-Please go to the [issues](https://github.com/renesansz/discord-greeter-bot/issues) tab and create a ticket from there. I'll try to help you as much as I can.
+`!adminhelp` - show admin help, only available for users with `Admin` role
 
-PLEASE before you ask, try to re-read the documentation/article if maybe you just have skipped something, then that's the time you ask.
+# Example
+
+As an admin, add a waypoint through Nebraska and set the ratio such that the waypoint (with one initial upvote) is accepted into the route. Show the status, which displays a Google Maps direction link.
+
+`!ratio 1.0`
+
+`!addpoint Nebraska`
+
+`!status`
+
+    discord-nav-bot
+    @user, 
+    1:    <up> 1 <down> 0   (user)   Nebraska
+    <Google Maps>

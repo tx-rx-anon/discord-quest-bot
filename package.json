@@ -1,19 +1,17 @@
 {
-  "name": "discord-greeter-bot",
-  "version": "1.0.1",
-  "description": "Simple discord bot script for responding to ping message from user.",
+  "name": "discord-nav-bot",
+  "version": "0.0.1",
+  "description": "Nav bot for Bijan's road trip.",
   "main": "bot.js",
   "keywords": [],
-  "author": "Rene Padillo",
+  "author": "Timothy Jones",
   "license": "MIT",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "discord.js": "^11.4.2",
-    "dotenv": "^8.1.0"
-  },
-  "engines": {
-    "node": "8.11.2"
+    "@discordjs/uws": "^10.149.0",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0"
   }
 }
