@@ -114,7 +114,7 @@ var status = function(msg) {
     line += "`   (" + suggestion.user.username + ")   " + suggestion.text;
     if (suggestion.accept()) {
       line = "**" + line + "**";
-      accepted.push(encodeURIComponent(suggestion.text));
+      accepted.push(encodeURIComponent(suggestion.text.replace(" ", "+")));
     }
     line += "\n";
     rtn += line;
