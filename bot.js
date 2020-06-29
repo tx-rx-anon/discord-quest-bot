@@ -114,7 +114,7 @@ var status = function(msg) {
     line += "`   (" + suggestion.user.username + ")   " + suggestion.text;
     if (suggestion.accept()) {
       line = "**" + line + "**";
-      accepted.push(suggestion.text);
+      accepted.push(encodeURIComponent(suggestion.text));
     }
     line += "\n";
     rtn += line;
@@ -125,7 +125,7 @@ var status = function(msg) {
   link += "Current+Location";
   link += "&destination=";
   // link += "34.059808,-118.368152";
-  link += destination;
+  link += encodeURIComponent(destination);
   if (accepted.length) {
     link += "&waypoints=";
     link += accepted.join("|");
@@ -167,11 +167,19 @@ var addPoint = function(msg, point) {
   msg.reply("Added waypoint '" + point + "'");
 }
 
+var delPoint = function(msg, num) {
+  let suggestion = getSuggestion(num);
+  if (suggestion && suggestion.user == msg.author) {
+    suggestions.splice(num - 1);
+    msg.reply("Deleted point `" + num + "`.");
+  }
+}
+
 var help = function(msg) {
   var help = "\n";
   help += "`!ping` - reply 'Pong!'\n";
   help += "`(!addpoint | !a) POINT` - Add waypoint `POINT`.\n";
-  help += "`(!delpoint | !x) NUMBER` - Delete waypoint number `NUMBER`. You can only delete the point if you submitted it.\n";
+  help += "`(!delpoint | !b) NUMBER` - Delete waypoint number `NUMBER`. You can only delete the point if you submitted it.\n";
   help += "`(!upvote | !u) NUMBER` - Upvote waypoint number `NUMBER`.\n";
   help += "`(!downvote | !d) NUMBER` - Downvote waypoint number `NUMBER`.\n";
   help += "`(!status | !s)` - Show waypoints and votes. Points with a voting ratio of 2:1 will be highlighted.\n";
@@ -179,8 +187,9 @@ var help = function(msg) {
   msg.reply(help);
 }
 
-var setDestination = function(dest) {
+var setDestination = function(msg, dest) {
   destination = dest;
+  msg.reply("Setting destination to " + dest + ".");
 }
 
 var adminhelp = function(msg) {
@@ -224,6 +233,7 @@ client.on('message', msg => {
     case 'delpoint':
     case 'b':
       if (args.length == 1) {
+        delPoint(msg, args[0]);
       }
       break;
     case 'upvote':
@@ -256,7 +266,7 @@ client.on('message', msg => {
     case 'destination':
     case 'x':
       if (isAdmin(msg)) {
-        setDestination(args);
+        setDestination(msg, args);
       }
       break;
     case 'ratio':
