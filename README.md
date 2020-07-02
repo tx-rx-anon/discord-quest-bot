@@ -6,7 +6,7 @@ You need to set up a Discord bot via <https://discord.com/developers/application
 
 1. Replace `MY-USER-NAME` with your desired user 
 
-       docker build MY-USER-NAME/discord-nav-bot .
+       docker build -t MY-USER-NAME/discord-nav-bot .
 
 2. Replace `BOT-TOKEN` with your bot token.
 
