@@ -181,27 +181,31 @@ var delPoint = function(msg, num) {
 
 var help = function(msg) {
   var help = "\n";
-  help += `\`${PREFIX}ping\` - reply 'Pong!'\n`;
-  help += `\`(${PREFIX}addpoint | ${PREFIX}a) POINT\` - Add waypoint \`POINT\`.\n`;
+  help += `My prefix for commands is \`${PREFIX}\`\n`;
+  help += `\n`;
+  help += `**User commands**\n`;
+  help += `\`(${PREFIX}status | ${PREFIX}s)\` - Show waypoints and votes.\n`;
+  // help += `\`${PREFIX}ping\` - reply 'Pong!'\n`;
+  help += `\`(${PREFIX}addpoint | ${PREFIX}a) POINT\` - Add waypoint, e.g. "mt rainier, wa".\n`;
   help += `\`(${PREFIX}delpoint | ${PREFIX}b) NUMBER\` - Delete waypoint number \`NUMBER\`. You can only delete the point if you submitted it.\n`;
-  help += `\`(${PREFIX}upvote | ${PREFIX}u) NUMBER\` - Upvote waypoint number \`NUMBER\`.\n`;
-  help += `\`(${PREFIX}downvote | ${PREFIX}d) NUMBER\` - Downvote waypoint number \`NUMBER\`.\n`;
-  help += `\`(${PREFIX}status | ${PREFIX}s)\` - Show waypoints and votes. Points with a voting ratio of 2:1 will be highlighted.\n`;
+  help += `\`(${PREFIX}upvote | ${PREFIX}u) NUMBER\` - Upvote waypoint.\n`;
+  help += `\`(${PREFIX}downvote | ${PREFIX}d) NUMBER\` - Downvote waypoint.\n`;
   help += `\`(${PREFIX}help | ${PREFIX}h)\` - Display this message.\n`;
-  msg.reply(help);
+  help += `\n`;
+  help += `**Admin commands**\n`;
+  help += `\`(${PREFIX}destination | ${PREFIX}x) DESTINATION\` - Set destination.\n`;
+  help += `\`(${PREFIX}ratio | ${PREFIX}r) RATIO\` - Set the vote ratio for accepting a waypoint. Default is 2.0.\n`;
+  const embed = new Discord.MessageEmbed()
+        .setTitle("Nav Bot Help")
+        .setDescription(help)
+        .setColor(0x7F00FF)
+        .setTimestamp();
+  msg.channel.send(embed);
 }
 
 var setDestination = function(msg, dest) {
   destination = dest;
   msg.reply("Setting destination to " + dest + ".");
-}
-
-var adminhelp = function(msg) {
-  var help = "\n";
-  help += `\`(${PREFIX}destination | ${PREFIX}x) DESTINATION\` - Set destination.\n`;
-  help += `\`(${PREFIX}ratio | ${PREFIX}r) RATIO\` - Set the vote ratio for accepting a waypoint. Default is 2.0.\n`;
-  help += `\`(${PREFIX}adminhelp | ${PREFIX}z)\` - Display this message.\n`;
-  msg.reply(help);
 }
 
 var setRatio = function(r) {
@@ -281,11 +285,6 @@ client.on('message', msg => {
         }
       }
       break;
-    case 'adminhelp':
-    case 'z':
-      if (args.length == 0) {
-        adminhelp(msg);
-      }
     }
   }
 });
