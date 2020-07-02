@@ -5,6 +5,11 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+let PREFIX = "%";
+if (process.env.CMD_PREFIX) {
+  PREFIX = process.env.CMD_PREFIX;
+}
+
 const ARROW_UP = "\u2b06";
 const ARROW_DOWN = "\u2b07";
 
@@ -177,13 +182,13 @@ var delPoint = function(msg, num) {
 
 var help = function(msg) {
   var help = "\n";
-  help += "`!ping` - reply 'Pong!'\n";
-  help += "`(!addpoint | !a) POINT` - Add waypoint `POINT`.\n";
-  help += "`(!delpoint | !b) NUMBER` - Delete waypoint number `NUMBER`. You can only delete the point if you submitted it.\n";
-  help += "`(!upvote | !u) NUMBER` - Upvote waypoint number `NUMBER`.\n";
-  help += "`(!downvote | !d) NUMBER` - Downvote waypoint number `NUMBER`.\n";
-  help += "`(!status | !s)` - Show waypoints and votes. Points with a voting ratio of 2:1 will be highlighted.\n";
-  help += "`(!help | !h)` - Display this message.\n";
+  help += `\`${PREFIX}ping\` - reply 'Pong!'\n`;
+  help += `\`(${PREFIX}addpoint | ${PREFIX}a) POINT\` - Add waypoint \`POINT\`.\n`;
+  help += `\`(${PREFIX}delpoint | ${PREFIX}b) NUMBER\` - Delete waypoint number \`NUMBER\`. You can only delete the point if you submitted it.\n`;
+  help += `\`(${PREFIX}upvote | ${PREFIX}u) NUMBER\` - Upvote waypoint number \`NUMBER\`.\n`;
+  help += `\`(${PREFIX}downvote | ${PREFIX}d) NUMBER\` - Downvote waypoint number \`NUMBER\`.\n`;
+  help += `\`(${PREFIX}status | ${PREFIX}s)\` - Show waypoints and votes. Points with a voting ratio of 2:1 will be highlighted.\n`;
+  help += `\`(${PREFIX}help | ${PREFIX}h)\` - Display this message.\n`;
   msg.reply(help);
 }
 
@@ -194,9 +199,9 @@ var setDestination = function(msg, dest) {
 
 var adminhelp = function(msg) {
   var help = "\n";
-  help += "`(!destination | !x) DESTINATION` - Set destination.\n";
-  help += "`(!ratio | !r) RATIO` - Set the vote ratio for accepting a waypoint. Default is 2.0.\n";
-  help += "`(!adminhelp | !z)` - Display this message.\n";
+  help += `\`(${PREFIX}destination | ${PREFIX}x) DESTINATION\` - Set destination.\n`;
+  help += `\`(${PREFIX}ratio | ${PREFIX}r) RATIO\` - Set the vote ratio for accepting a waypoint. Default is 2.0.\n`;
+  help += `\`(${PREFIX}adminhelp | ${PREFIX}z)\` - Display this message.\n`;
   msg.reply(help);
 }
 
@@ -215,7 +220,7 @@ var isAdmin = function(msg) {
 // Event listener when a user sends a message in the chat.
 client.on('message', msg => {
 
-  if (msg.content.substring(0,1) == "!") {
+  if (msg.content.substring(0,1) == PREFIX) {
     var args = msg.content.substring(1).split(' ');
     var cmd = args[0];
 
