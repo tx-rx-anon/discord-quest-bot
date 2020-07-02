@@ -9,7 +9,6 @@ let PREFIX = "%";
 if (process.env.CMD_PREFIX) {
   PREFIX = process.env.CMD_PREFIX;
 }
-
 const ARROW_UP = "\u2b06";
 const ARROW_DOWN = "\u2b07";
 
@@ -220,8 +219,8 @@ var isAdmin = function(msg) {
 // Event listener when a user sends a message in the chat.
 client.on('message', msg => {
 
-  if (msg.content.substring(0,1) == PREFIX) {
-    var args = msg.content.substring(1).split(' ');
+  if (msg.content.startsWith(PREFIX)) {
+    var args = msg.content.substring(PREFIX.length).split(' ');
     var cmd = args[0];
 
     args = args.splice(1);
