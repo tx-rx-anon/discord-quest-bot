@@ -4,14 +4,18 @@ You need to set up a Discord bot via <https://discord.com/developers/application
 
 ## Build and run Docker image
 
-1. Replace `MY-USER-NAME` with your desired user 
+1. Replace `MY-USER-NAME` with your desired user
 
-       docker build -t MY-USER-NAME/discord-nav-bot .
+       docker build -t MY-USER-NAME/discord-quest-bot .
+
+     Note that a Docker build for `awatt/discord-quest-bot` is triggered automatically on pushes to `develop`. You can pull the image from there.
 
 2. Replace `BOT-TOKEN` with your bot token.
 
        docker run --rm -e DISCORD_TOKEN='BOT-TOKEN' MY-USER-NAME/discord-nav-bot
        
+     You can also add the clause `-e CMD_PREFIX='MY-PREFIX'` to set the command prefix. Default is `zzz `.
+
 ## Run outside of Docker
 
     cp .env.tpl .env
@@ -21,28 +25,16 @@ You need to set up a Discord bot via <https://discord.com/developers/application
 
 # Methodology
 
-  + The bot keeps a list of waypoints and a destination.
-  + A Google Maps route is defined from the current location to the destination. Waypoints are included inbetween the current location and destination.
-  + Users can submit and vote on waypoints.
-  + Admins (users with `Admin` role) can set the destination and the upvote ratio above which waypoints are accepted into the route.
+  + For each server the bot is on, a list of quests is kept.
+  + A user can start a quest for themself.
+  + Any user can suggest a *task* for any user on a quest.
 
 # Usage
 
-`!help` - show help
-
-`!adminhelp` - show admin help, only available for users with `Admin` role
+`zzz help` - show help
 
 # Example
 
-As an admin, add a waypoint through Nebraska and set the ratio such that the waypoint (with one initial upvote) is accepted into the route. Show the status, which displays a Google Maps direction link.
+`zzz quest Drive to the lake`
 
-`!ratio 1.0`
-
-`!addpoint Nebraska`
-
-`!status`
-
-    discord-nav-bot
-    @user, 
-    1:    <up> 1 <down> 0   (user)   Nebraska
-    <Google Maps link>
+`zzz task @user Beer shop, 123 Main Street, Madison WI`

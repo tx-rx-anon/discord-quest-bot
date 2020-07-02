@@ -12,7 +12,7 @@ const QuestBot = require('./lib');
 const winston = require('winston');
 
 // Command prefix
-const PREFIX = process.env.CMD_PREFIX || "%";
+const PREFIX = process.env.CMD_PREFIX || "zzz ";
 
 // Color
 const EMBED_COLOR = 0x7F00FF;
