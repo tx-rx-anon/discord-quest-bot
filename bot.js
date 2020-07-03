@@ -161,7 +161,6 @@ async function getTaskConfirmation(message, quester, destination) {
       }
 	  })
 	  .catch(collected => {
-      console.log(collected);
 	  });
 }
 
@@ -201,7 +200,7 @@ async function sendUserOnTask(message, args) {
     } else {
       message.channel.send("Not enough upvotes.");
     }
-  }, 5*1000);
+  }, DURATION*1000);
 }
 
 async function endTask(message, args) {
