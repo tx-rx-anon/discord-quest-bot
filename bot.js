@@ -73,6 +73,8 @@ function help(message) {
   help += `**User commands**\n`;
   help += `> \`${PREFIX}quest DESCRIPTION\` - Start a quest for yourself.\n`;
   help += `> \`${PREFIX}task USER LOCATION\` - Send user on a quest.\n`;
+  help += `> \`${PREFIX}endtask\` - End the task you're on.\n`;
+  help += `> \`${PREFIX}endquest\` - End the quest you're on.\n`;
   help += `> \`${PREFIX}status\` - Show active quests.\n`;
   // help += `\`${PREFIX}ping\` - reply 'Pong!'\n`;
   help += `> \`${PREFIX}help\` - Display this message.\n`;
@@ -132,15 +134,34 @@ async function createQuest(message, args) {
         } else {
 			    message.reply("Your quest is confirmed.");
           const snowflake = Discord.SnowflakeUtil.generate();
-          const quest = new QuestBot.Quest(client, {id: snowflake, user: user, description: description, message: reply});
-          qm.add(quest);
+          qm.add({id: snowflake, user: user, description: description, message: reply});
         }
 		  }
 	  })
 	  .catch(collected => {
-      console.log(collected);
       embed.setTitle("~~" + embed.title + "~~ (expired)");
       reply.edit(embed);
+	  });
+}
+
+async function getTaskConfirmation(message, quester, destination) {
+  const confirmation = await message.channel.send(`${quester}, will you go to ${destination}?`);
+  confirmation.react('✅').then(() => confirmation.react('❌'));
+  const filter = (reaction, user) => {
+	  return ['✅', '❌'].includes(reaction.emoji.name) && user.id === quester.id;
+  };
+  confirmation.awaitReactions(filter, { max: 1, time: DURATION*1000, errors: ['time'] })
+	  .then(collected => {
+		  const reaction = collected.first();
+		  if (reaction.emoji.name === '✅') {
+        const google = "https://www.google.com/maps/dir/?api=1&destination=" + destination.replace(' ', '+');
+       message.channel.send(`Open this nav link on your phone: ${google}`);
+		  } else if (reaction.emoji.name === '❌') {
+        message.channel.send("Pfft.");
+      }
+	  })
+	  .catch(collected => {
+      console.log(collected);
 	  });
 }
 
@@ -156,34 +177,76 @@ async function sendUserOnTask(message, args) {
   const embed = new Discord.MessageEmbed()
         .setTitle(`☑️ New Task`)
         .setColor(EMBED_COLOR)
-        .setDescription(`${message.author} is trying to start a new task for ${user}! Voting will end in ${DURATION} seconds...`)
-        .addField("Destination", `[${destination}](${google})`);
+        .setDescription(`${message.author} is trying to start a new task for ${user}!`)
+        .addField("Destination", `[${destination}](${google})`)
+        .addField("Voting", `Vote by reacting with 👍 and 👎, voting will end in ${DURATION} seconds...`);
   let reply = await message.channel.send(embed);
   // Get reactions
   reply.react('👍').then(() => reply.react('👎'));
-  const filter = (reaction, user) => {
-	  return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
-  };
-  reply.awaitReactions(filter, { max: 1, time: DURATION*1000, errors: ['time'] })
-	  .then(collected => {
-		  const reaction = collected.first();
-		  if (reaction.emoji.name === '👍') {
-			  reply.reply('you reacted with a thumbs up.');
-        // let task = new QuestBot.Task(client, {id: Discord.SnowflakeUtil.generate()});
-		  } else {
-			  reply.reply('you reacted with a thumbs down.');
-		  }
-	  })
-	  .catch(collected => {
-		  reply.reply('you reacted with neither a thumbs up, nor a thumbs down.');
-	  });
+  setTimeout(function(){
+    let ratio = 1;
+    let u = 1;
+    let d = 1;
+    reply.reactions.cache.forEach(reaction => {
+      if (reaction.emoji.name === '👍') {
+        u = reaction.count;
+      } else if (reaction.emoji.name === '👎') {
+        d = reaction.count;
+      }
+    });
+    ratio = u / d;
+    if (ratio >= 2.0) {
+      message.channel.send("The community is in favor.");
+      getTaskConfirmation(message, user, destination);
+    } else {
+      message.channel.send("Not enough upvotes.");
+    }
+  }, 5*1000);
+}
+
+async function endTask(message, args) {
+  const user = message.author;
+  if (!user) return;
+  const qm = quests.get(message.guild);
+  const quest = getActiveQuest(user, qm);
+  if (!quest) {
+    message.reply("You don't have an active quest.");
+    return;
+  } else {
+    const embed = new Discord.MessageEmbed()
+          .setTitle(`Ended Task`)
+          .setColor(EMBED_COLOR)
+          .setDescription(`${user} just ended their task. Was it a success? React to let us know. Give them something else to do.`)
+          .addField("Route", `  • \n  • \n[Google Maps](https://maps.google.com)`);
+    let reply = await message.channel.send(embed);
+    reply.react('👍').then(() => reply.react('👎'));
+  }
+}
+
+async function endQuest(message, args) {
+  const user = message.author;
+  if (!user) return;
+  const qm = quests.get(message.guild);
+  const quest = getActiveQuest(user, qm);
+  if (!quest) {
+    message.reply("You don't have an active quest.");
+    return;
+  } else {
+    const embed = new Discord.MessageEmbed()
+          .setTitle(`Ended Quest`)
+          .setColor(EMBED_COLOR)
+          .setDescription(`${user} just ended their quest. Was it a success? React to let us know.`)
+          .addField("Route", `  • \n  • \n[Google Maps](https://maps.google.com)`);
+    let reply = await message.channel.send(embed);
+    reply.react('👍').then(() => reply.react('👎'));
+  }
 }
 
 async function status(message, args) {
   const qm = quests.get(message.guild);
   let status = "";
   qm.cache.forEach(quest => {
-    status += `  • (${quest.user}) ` + (quest.description || "???") + "\n";
+    status += `  • ${quest.user}   ` + (quest.description || "???") + "\n";
   });
   if (status === "") status = "*No active quests.*";
   const embed = new Discord.MessageEmbed()
@@ -213,6 +276,14 @@ client.on('message', message => {
   case 'task':
   case 't':
     sendUserOnTask(message, args);
+    break;
+  case 'endtask':
+  case 'e':
+    endTask(message, args);
+    break;
+  case 'endquest':
+  case 'f':
+    endQuest(message, args);
     break;
   case 'status':
   case 's':
